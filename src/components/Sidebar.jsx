@@ -14,8 +14,8 @@ const Sidebar = () => {
 					alt="logo"
 					className="w-full h-36 object-contain mt-5"
 				/>
-				<h1 className="text-gray-300 font-oswald -mt-2 font-semibold">
-					THE FOREST RETREAT
+				<h1 className="text-gray-300 text-xl text-center font-custom -mt-2 font-semibold">
+					Wild Forest Staycation
 				</h1>
 			</div>
 
@@ -35,7 +35,7 @@ const Sidebar = () => {
 						<>
 							<FaHome
 								className={`text-lg ${
-									isActive ? "text-[#4f46e5]" : ""
+									isActive ? "text-[#CC9A3A]" : ""
 								}`}
 							/>
 							<span className="">Home</span>
@@ -57,7 +57,7 @@ const Sidebar = () => {
 						<>
 							<FaBookOpen
 								className={`text-lg ${
-									isActive ? "text-[#4f46e5]" : ""
+									isActive ? "text-[#CC9A3A]" : ""
 								}`}
 							/>
 							<span className="">Bookings</span>
@@ -79,7 +79,7 @@ const Sidebar = () => {
 						<>
 							<GiCampingTent
 								className={`text-lg ${
-									isActive ? "text-[#4f46e5]" : ""
+									isActive ? "text-[#CC9A3A]" : ""
 								}`}
 							/>
 							<span className="">Cabins</span>
@@ -101,7 +101,7 @@ const Sidebar = () => {
 						<>
 							<FaUserFriends
 								className={`text-lg ${
-									isActive ? "text-[#4f46e5]" : ""
+									isActive ? "text-[#CC9A3A]" : ""
 								}`}
 							/>
 							<span className="">Users</span>
@@ -123,7 +123,7 @@ const Sidebar = () => {
 						<>
 							<FiSettings
 								className={`text-lg ${
-									isActive ? "text-[#4f46e5]" : ""
+									isActive ? "text-[#CC9A3A]" : ""
 								}`}
 							/>
 							<span className="">Settings</span>
