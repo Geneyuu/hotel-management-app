@@ -2,18 +2,21 @@ import { NavLink } from "react-router-dom";
 import { FaHome, FaBookOpen, FaUserFriends } from "react-icons/fa";
 import { GiCampingTent } from "react-icons/gi";
 import { FiSettings } from "react-icons/fi";
-import logo from "../assets/logo-dark.png";
+import logo from "../assets/logo-dark-2.png";
 
 const Sidebar = () => {
 	return (
 		<aside className="w-72 h-full bg-[#18212F] text-white flex flex-col items-center">
 			{/* Logo */}
-			<div className="flex flex-col items-center mb-10">
+			<div className="flex flex-col items-center mb-10 pointer-events-none">
 				<img
 					src={logo}
 					alt="logo"
-					className="w-full h-28 object-contain mt-5"
+					className="w-full h-36 object-contain mt-5"
 				/>
+				<h1 className="text-gray-300 font-oswald -mt-2 font-semibold">
+					THE FOREST RETREAT
+				</h1>
 			</div>
 
 			{/* Navigation */}

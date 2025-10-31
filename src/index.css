@@ -5,3 +5,8 @@
 body {
 	font-family: "Poppins", sans-serif;
 }
+
+/* Custom utility for Oswald font */
+.font-oswald {
+	font-family: "Oswald", sans-serif;
+}
