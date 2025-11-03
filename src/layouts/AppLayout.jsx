@@ -6,20 +6,26 @@ import AccountHeader from "../components/AccountHeader";
 const AppLayout = () => {
 	return (
 		<div className="min-h-screen bg-[#111827] text-white flex flex-col md:flex-row">
-			{/* Header for medium to small screens */}
-			<div className="md:hidden">
+			{/* Header for mobile screens */}
+			<header className="md:hidden">
 				<Header />
-			</div>
+			</header>
 
 			{/* Sidebar for large screens */}
-			<div className="hidden md:flex">
+			<aside className="hidden md:flex">
 				<Sidebar />
-			</div>
+			</aside>
 
 			{/* Main content area */}
 			<main className="flex-1 overflow-y-auto">
-				<AccountHeader />
-				<Outlet />
+				{/* Secondary header (account info, toolbar, etc.) */}
+				<header>
+					<AccountHeader />
+				</header>
+
+				<section className="max-w-6xl px-6 mx-auto my-10 text-2xl font-semibold text-gray-200">
+					<Outlet />
+				</section>
 			</main>
 		</div>
 	);

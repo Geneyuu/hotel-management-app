@@ -21,8 +21,8 @@ const Header = () => {
 			<nav className="flex items-center gap-4">
 				{[
 					{ to: "/dashboard", icon: <FaHome /> },
-					{ to: "/bookings", icon: <FaBookOpen /> },
-					{ to: "/cabins", icon: <GiCampingTent /> },
+					{ to: "/reservations", icon: <FaBookOpen /> },
+					{ to: "/rooms", icon: <GiCampingTent /> },
 					{ to: "/users", icon: <FaUserFriends /> },
 					{ to: "/settings", icon: <FiSettings /> },
 				].map(({ to, icon }) => (

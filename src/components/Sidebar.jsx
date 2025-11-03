@@ -25,7 +25,7 @@ const Sidebar = () => {
 	];
 
 	return (
-		<aside className="w-72 h-full bg-[#18212F] text-white flex flex-col justify-between border-r-[1px] border-gray-300/10">
+		<div className="w-72 h-full bg-[#18212F] text-white flex flex-col justify-between border-r-[1px] border-gray-300/10">
 			{/* Top section (logo + overview + operations) */}
 			<div className="flex flex-col items-center w-full">
 				{/* Logo */}
@@ -146,7 +146,7 @@ const Sidebar = () => {
 					<span>Logout</span>
 				</button>
 			</div>
-		</aside>
+		</div>
 	);
 };
 
