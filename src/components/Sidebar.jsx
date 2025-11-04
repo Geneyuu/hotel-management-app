@@ -31,7 +31,7 @@ const Sidebar = () => {
 				{/* Logo */}
 				<div className="flex flex-col items-center mb-8 mt-5 pointer-events-none">
 					<img
-						src={logo}
+						src="https://placehold.co/400"
 						alt="logo"
 						className="w-36 h-36 object-contain"
 					/>

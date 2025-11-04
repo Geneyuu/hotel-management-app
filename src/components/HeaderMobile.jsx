@@ -4,8 +4,8 @@ import { GiCampingTent } from "react-icons/gi";
 import { FiSettings } from "react-icons/fi";
 import logo from "../assets/logo-dark.png";
 
-const Header = () => {
-	// Instead na gawing responsive yung sidebar, gumawa nalang ako ng another component for header in desktop to large desktop
+const HeaderMobile = () => {
+	// Instead na gawing responsive yung sidebar, gumawa nalang ako ng another component for HeaderMobile in desktop to large desktop
 	return (
 		<header className=" bg-[#18212F] text-white flex items-center justify-between px-4 py-3 md:hidden">
 			{/* Logo */}
@@ -18,7 +18,7 @@ const Header = () => {
 			</div>
 
 			{/* Navigation Icons */}
-			<nav className="flex items-center gap-4">
+			<nav className="flex items-center gap-3">
 				{[
 					{ to: "/dashboard", icon: <FaHome /> },
 					{ to: "/reservations", icon: <FaBookOpen /> },
@@ -37,7 +37,7 @@ const Header = () => {
 							}`
 						}
 					>
-						<span className="text-xl">{icon}</span>
+						<span className="text-lg">{icon}</span>
 					</NavLink>
 				))}
 			</nav>
@@ -45,4 +45,4 @@ const Header = () => {
 	);
 };
 
-export default Header;
+export default HeaderMobile;

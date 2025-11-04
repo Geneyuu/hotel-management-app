@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+import HeaderMobile from "../components/HeaderMobile";
 import AccountHeader from "../components/AccountHeader";
 
 const AppLayout = () => {
@@ -8,7 +8,7 @@ const AppLayout = () => {
 		<div className="min-h-screen bg-[#111827] text-white flex flex-col md:flex-row">
 			{/* Header for mobile screens */}
 			<header className="md:hidden">
-				<Header />
+				<HeaderMobile />
 			</header>
 
 			{/* Sidebar for large screens */}
@@ -23,7 +23,7 @@ const AppLayout = () => {
 					<AccountHeader />
 				</header>
 
-				<section className="max-w-6xl px-6 mx-auto my-10 text-2xl font-semibold text-gray-200">
+				<section className="max-w-6xl px-4 mx-auto my-10 text-2xl font-semibold text-gray-200">
 					<Outlet />
 				</section>
 			</main>
