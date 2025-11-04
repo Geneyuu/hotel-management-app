@@ -9,8 +9,9 @@ const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			refetchOnWindowFocus: false, // wag auto refetch pag balik sa tab
-			// retry: 1, // ilang beses magre-retry pag failed
-			staleTime: 60 * 1000,
+			staleTime: 5000, // data is fresh for 5 seconds
+			refetchOnMount: true, // auto refetch if stale when component mounts
+			refetchOnWindowFocus: true, // auto refetch if tab/window gains focus
 		},
 	},
 });
