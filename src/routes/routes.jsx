@@ -10,20 +10,20 @@ import Account from "../pages/Account";
 import NotFound from "../pages/NotFound";
 
 const routes = createBrowserRouter([
-	{
-		path: "/",
-		element: <AppLayout />,
-		children: [
-			{ index: true, element: <Navigate to="/dashboard" replace /> },
-			{ path: "dashboard", element: <Home /> },
-			{ path: "reservations", element: <Reservation /> },
-			{ path: "rooms", element: <Rooms /> },
-			{ path: "users", element: <Users /> },
-			{ path: "settings", element: <Settings /> },
-			{ path: "account", element: <Account /> },
-			{ path: "*", element: <NotFound /> },
-		],
-	},
+    {
+        path: "/",
+        element: <AppLayout />,
+        children: [
+            { index: true, element: <Navigate to="/dashboard" replace /> },
+            { path: "dashboard", element: <Home /> },
+            { path: "reservations", element: <Reservation /> },
+            { path: "rooms", element: <Rooms /> },
+            { path: "users", element: <Users /> },
+            { path: "settings", element: <Settings /> },
+            { path: "account", element: <Account /> },
+            { path: "*", element: <NotFound /> },
+        ],
+    },
 ]);
 
 export default routes;

@@ -3,7 +3,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Spinner from "../components/Spinner";
 import { HiOutlineDotsVertical, HiPencil, HiTrash } from "react-icons/hi";
 import { IoCopyOutline } from "react-icons/io5";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 const Rooms = () => {
     const queryClient = useQueryClient();
@@ -22,11 +23,11 @@ const Rooms = () => {
         onSuccess: (data) => {
             console.log("Successfully deleted:", data);
             queryClient.invalidateQueries({ queryKey: ["rooms"] });
-            alert("Room deleted successfully!");
+            toast.success("Room deleted successfully!");
         },
         onError: (error) => {
             console.error("Error deleting room:", error);
-            alert("Error deleting room: " + error.message);
+            toast.error(`Error deleting room: ${error.message}`);
         },
     });
 
@@ -36,9 +37,24 @@ const Rooms = () => {
         setOpenMenuId(openMenuId === id ? null : id);
     };
 
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!event.target.closest(".dropdown-button") && !event.target.closest(".dropdown-menu")) {
+                setOpenMenuId(null);
+            }
+        };
+
+        document.addEventListener("click", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("click", handleClickOutside);
+        };
+    }, []);
+
     if (isLoading) return <Spinner />;
 
-    if (error instanceof Error) {
+    if (error) {
         return <p className="text-red-500">Error: {error.message}</p>;
     }
 
@@ -87,7 +103,7 @@ const Rooms = () => {
                                 <td className="border-t border-gray-700 text-center text-white relative">
                                     <span
                                         tabIndex={0}
-                                        className="dropdown-button sm:text-sm  cursor-pointer inline-block p-1 rounded transition-all duration-200 hover:bg-[#18212F]"
+                                        className="dropdown-button sm:text-sm cursor-pointer inline-block p-1 rounded transition-all duration-200 hover:bg-[#18212F]"
                                         onClick={() => toggleMenu(id)}
                                     >
                                         <HiOutlineDotsVertical className="text-sm md:text-lg" />
@@ -95,14 +111,12 @@ const Rooms = () => {
 
                                     {/* Dropdown menu */}
                                     <div
-                                        className={`absolute right-2 md:-left-16 lg:-left-4 mt-2 w-32 bg-gray-800 rounded shadow-2xl z-10 transform transition-all duration-200 ${
+                                        className={`dropdown-menu absolute right-2 md:-left-16 lg:-left-4 mt-2 w-32 bg-gray-800 rounded shadow-2xl z-10 transform transition-all duration-200 ${
                                             openMenuId === id
                                                 ? "scale-100 opacity-100"
                                                 : "scale-95 opacity-0 pointer-events-none"
                                         }`}
-                                        style={{
-                                            boxShadow: "5px 5px 20px rgba(0,0,0,0.4)",
-                                        }}
+                                        style={{ boxShadow: "5px 5px 20px rgba(0,0,0,0.4)" }}
                                     >
                                         <ul className="flex flex-col">
                                             <li

@@ -7,7 +7,7 @@ import logo from "../assets/logo-dark.png";
 const HeaderMobile = () => {
     // Instead na gawing responsive yung sidebar, gumawa nalang ako ng another component for HeaderMobile in desktop to large desktop
     return (
-        <header className=" bg-[#18212F] text-white flex items-center justify-between px-4 py-3 md:hidden">
+        <div className=" bg-[#18212F] text-white flex items-center justify-between px-4 py-3 md:hidden">
             {/* Logo */}
             <div className="flex items-center gap-2 pointer-events-none">
                 <img src={logo} alt="logo" className="w-24 h-auto object-cover" />
@@ -37,7 +37,7 @@ const HeaderMobile = () => {
                     </NavLink>
                 ))}
             </nav>
-        </header>
+        </div>
     );
 };
 
