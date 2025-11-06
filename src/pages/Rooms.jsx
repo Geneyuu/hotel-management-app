@@ -5,6 +5,7 @@ import { HiOutlineDotsVertical, HiPencil, HiTrash } from "react-icons/hi";
 import { IoCopyOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import AddNewRoom from "../components/AddNewRoom";
 
 const Rooms = () => {
     const queryClient = useQueryClient();
@@ -155,6 +156,7 @@ const Rooms = () => {
                     })}
                 </tbody>
             </table>
+            <AddNewRoom />
         </div>
     );
 };
