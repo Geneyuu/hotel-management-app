@@ -41,7 +41,10 @@ const Rooms = () => {
     // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (!event.target.closest(".dropdown-button") && !event.target.closest(".dropdown-menu")) {
+            if (
+                !event.target.closest(".dropdown-button") &&
+                !event.target.closest(".dropdown-menu")
+            ) {
                 setOpenMenuId(null);
             }
         };
@@ -87,11 +90,15 @@ const Rooms = () => {
                                             alt={name}
                                             className="w-12 sm:w-16 md:w-24 object-cover rounded-md"
                                         />
-                                        <span className="text-[11px] sm:text-sm text-white">{name}</span>
+                                        <span className="text-[11px] sm:text-sm text-white">
+                                            {name}
+                                        </span>
                                     </div>
                                 </td>
 
-                                <td className="border-t border-gray-700 text-center text-white">${price}</td>
+                                <td className="border-t border-gray-700 text-center text-white">
+                                    ${price}
+                                </td>
 
                                 <td className="border-t border-gray-700 text-center text-white">
                                     Fits up to {Capacity}
@@ -139,7 +146,11 @@ const Rooms = () => {
                                             <li
                                                 className="flex items-center gap-2 px-3 py-2 text-white text-xs cursor-pointer hover:bg-[#18212F]"
                                                 onClick={() => {
-                                                    if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                                                    if (
+                                                        confirm(
+                                                            `Are you sure you want to delete "${name}"?`
+                                                        )
+                                                    ) {
                                                         console.log("🗑️ Deleting room id:", id);
                                                         removeRoom(id);
                                                     }

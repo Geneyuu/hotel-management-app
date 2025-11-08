@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { IoIosClose } from "react-icons/io";
 
 const AddNewRoom = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -39,28 +40,36 @@ const AddNewRoom = () => {
 
             {/* Modal */}
             <div
-                className={`fixed inset-0 bg-black/25 flex justify-center items-center transition-all duration-300 ${
+                className={`fixed inset-0 bg-black/50 flex justify-center items-center transition-all duration-300 ${
                     isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
                 }`}
             >
                 <div
-                    className={`modal bg-[#111827] text-white rounded-2xl p-6 w-[80%] md:w-[100%] max-w-2xl shadow-2xl transform transition-all duration-300 ${
+                    className={`relative modal bg-[#18212F] text-white rounded-md p-10 w-[90%] md:w-[100%] max-w-3xl shadow-2xl transform transition-all duration-300 ${
                         isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
                     }`}
                     onClick={(e) => e.stopPropagation()} // prevent modal click from closing
                 >
-                    <h2 className="text-lg font-semibold mb-4 text-center">Add New Room</h2>
+                    <h2 className="text-lg font-semibold mb-4">Add New Room</h2>
 
-                    <form action="" className="text-xs font-normal flex flex-col gap-3">
+                    <form action="" className=" text-xs font-normal flex flex-col gap-3">
+                        <div
+                            onClick={() => setIsOpen(!isOpen)}
+                            tabIndex={0}
+                            className="absolute top-5 right-5 text-2xl outline-none focus:ring-1 focus:ring-[#4f46e5]  rounded-md p-1 cursor-pointer transition-all hover:bg-black/20"
+                        >
+                            <IoIosClose />
+                        </div>
+
                         {/* Room Name */}
                         <div className="flex items-center gap-2 py-3 border-b-[1px] border-gray-800">
-                            <label htmlFor="room1" className="w-1/3">
+                            <label htmlFor="room" className="w-1/3">
                                 Room Name
                             </label>
                             <input
                                 type="text"
-                                id="room1"
-                                className="bg-transparent border w-2/3 md:w-1/4 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                id="room"
+                                className="bg-transparent border min-w-[35%] md:w-1/4 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             />
                         </div>
 
@@ -73,7 +82,7 @@ const AddNewRoom = () => {
                                 type="number"
                                 id="price"
                                 min="0"
-                                className="bg-transparent border w-2/3 md:w-1/4 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                className="bg-transparent border min-w-[35%] md:w-1/4 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             />
                         </div>
 
@@ -86,21 +95,19 @@ const AddNewRoom = () => {
                                 type="number"
                                 id="capacity"
                                 min="1"
-                                className="bg-transparent border w-2/3 md:w-1/4 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                className="bg-transparent border min-w-[35%] md:w-1/4 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             />
                         </div>
 
                         {/* Room Discount */}
                         <div className="flex items-center gap-2 py-3 border-b-[1px] border-gray-800">
                             <label htmlFor="discount" className="w-1/3">
-                                Room Discount (%)
+                                Room Capacity
                             </label>
                             <input
                                 type="number"
                                 id="discount"
-                                min="0"
-                                max="100"
-                                className="bg-transparent border w-2/3 md:w-1/4 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                className="bg-transparent border min-w-[35%] md:w-1/4 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             />
                         </div>
 
