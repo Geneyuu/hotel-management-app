@@ -77,7 +77,7 @@ const Rooms = () => {
                             <th className="p-2 sm:p-3">Actions</th>
                         </tr>
                     </thead>
-
+                    sadsdsdadadad
                     <tbody className="font-normal">
                         {rooms.map((room) => {
                             const { id, name, image, price, Capacity, discount } = room;
