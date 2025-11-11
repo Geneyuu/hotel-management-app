@@ -31,3 +31,35 @@ export async function deleteRoom(id) {
         throw error;
     }
 }
+
+// const { data, error } = await supabase
+//   .from('rooms')
+//   .insert([
+//     { some_column: 'someValue', other_column: 'otherValue' },
+//   ])
+//   .select()
+
+export async function addRoom() {
+    const { data, error } = await supabase
+        .from("rooms")
+        .insert([
+            {
+                name: "Deluxe Room",
+                Capacity: 2500,
+                price: 129,
+                discount: 10,
+                description: "With balcony and ocean view",
+            },
+        ])
+        .select();
+
+    if (error) {
+        console.error("❌ Error inserting room:", error.message);
+        throw new Error(error.message);
+    }
+
+    console.log("✅ Room added:", data);
+    return data;
+}
+
+console.log(addRoom());

@@ -48,7 +48,7 @@ const AddNewRoom = () => {
                     className={`relative modal bg-[#18212F] text-white rounded-md p-10 w-[90%] md:w-[100%] max-w-3xl shadow-2xl transform transition-all duration-300 ${
                         isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
                     }`}
-                    onClick={(e) => e.stopPropagation()} // prevent modal click from closing
+                    onClick={(e) => e.stopPropagation()}
                 >
                     <h2 className="text-lg font-semibold mb-4">Add New Room</h2>
 
@@ -119,7 +119,7 @@ const AddNewRoom = () => {
                             <textarea
                                 id="description"
                                 rows={3}
-                                className="bg-transparent border w-2/3 md:w-1/2 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"
+                                className="bg-transparent border w-[65%] md:w-1/2 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y"
                             />
                         </div>
 

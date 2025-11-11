@@ -17,7 +17,7 @@ const AppLayout = () => {
             </aside>
 
             {/* Main content area */}
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 overflow-y-hidden">
                 {/* Secondary header (account info, toolbar, etc.) */}
                 <header>
                     <AccountHeader />
