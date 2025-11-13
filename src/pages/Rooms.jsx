@@ -119,7 +119,7 @@ const Rooms = () => {
 
                                         {/* Dropdown menu */}
                                         <div
-                                            className={`dropdown-menu absolute right-2 md:-left-16 lg:-left-4 mt-2 w-32 bg-gray-800 rounded shadow-2xl z-10 transform transition-all duration-200 ${
+                                            className={`dropdown-menu absolute  right-2 md:-left-16 lg:-left-4 mt-2 w-32 bg-gray-800 rounded shadow-2xl transform transition-all duration-200 ${
                                                 openMenuId === id
                                                     ? "scale-100 opacity-100"
                                                     : "scale-95 opacity-0 pointer-events-none"

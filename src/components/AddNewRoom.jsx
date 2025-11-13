@@ -2,7 +2,8 @@ import { useForm } from "react-hook-form";
 import { IoIosClose } from "react-icons/io";
 import { useState, useEffect } from "react";
 import { addRoom } from "../services/apiRooms";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const AddNewRoom = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -12,36 +13,37 @@ const AddNewRoom = () => {
         register,
         handleSubmit,
         reset,
-        formState: { errors, isSubmitting },
+        formState: { errors },
     } = useForm();
 
-    //  Handle form submit
-    async function onSubmit(formData) {
-        try {
-            await addRoom({
-                name: formData.name,
-                price: Number(formData.price),
-                Capacity: Number(formData.capacity),
-                discount: Number(formData.discount || 0),
-                description: formData.description,
-            });
-
-            //  Refresh room list
+    const { mutate: addRoomMutate, isPending } = useMutation({
+        mutationFn: addRoom,
+        onSuccess: async () => {
             await queryClient.invalidateQueries(["rooms"]);
+            toast.success("Room added successfully!");
+            reset();
+            setIsOpen(false);
+        },
+        onError: (err) => {
+            toast.error("Failed to add room: " + err.message);
+        },
+    });
 
-            alert("Room added successfully!");
-            reset(); // Clear fields
-            setIsOpen(false); // Close modal
-        } catch (err) {
-            alert("Failed to add room: " + err.message);
-        }
-    }
+    const onSubmit = (formData) => {
+        const { name, price, capacity, discount, description } = formData;
+        addRoomMutate({
+            name,
+            price: Number(price),
+            Capacity: Number(capacity),
+            discount: Number(discount || 0),
+            description,
+        });
+    };
 
-    // Close when clicking outside the modal
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (!event.target.closest(".modal")) {
-                reset(); // clear form + errors
+                reset();
                 setIsOpen(false);
             }
         };
@@ -52,36 +54,31 @@ const AddNewRoom = () => {
 
     return (
         <>
-            {/* Open Modal Button */}
             <div
                 onClick={(e) => {
                     e.stopPropagation();
                     setIsOpen(true);
                 }}
                 className="text-[10px] md:text-xs font-normal bg-[#4f46e5] w-fit cursor-pointer 
-                           px-3 md:py-2 md:px-4 rounded-md transition-all duration-300 
-                           hover:bg-[#4338ca]"
+                   px-3 md:py-2 md:px-4 rounded-md transition-all duration-300 
+                   hover:bg-[#4338ca]"
             >
                 Add new Room
             </div>
 
-            {/* Modal Overlay */}
             <div
                 className={`fixed inset-0 bg-black/50 flex justify-center items-center transition-all duration-300 z-50 ${
                     isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
                 }`}
             >
-                {/* Modal Content */}
                 <div
                     className={`relative modal bg-[#18212F] text-white rounded-md p-10 w-[90%] md:w-[100%] max-w-3xl shadow-2xl transform transition-all duration-300 ${
                         isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
                     }`}
                     onClick={(e) => e.stopPropagation()}
                 >
-                    {/* Title */}
                     <h2 className="text-lg font-semibold mb-4">Add New Room</h2>
 
-                    {/* Close Icon */}
                     <div
                         onClick={() => {
                             reset();
@@ -93,7 +90,6 @@ const AddNewRoom = () => {
                         <IoIosClose />
                     </div>
 
-                    {/* Form */}
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         className="text-xs font-normal flex flex-col gap-3"
@@ -131,7 +127,7 @@ const AddNewRoom = () => {
                                 <input
                                     {...register("price", {
                                         required: "Price is required",
-                                        min: { value: 1, message: "Price must be greater than 0" },
+                                        min: { value: 1, message: "Price must be > 0" },
                                     })}
                                     type="number"
                                     id="price"
@@ -234,14 +230,14 @@ const AddNewRoom = () => {
 
                             <button
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={isPending}
                                 className={`px-4 py-2 rounded transition-colors ${
-                                    isSubmitting
+                                    isPending
                                         ? "bg-indigo-400 cursor-not-allowed"
                                         : "bg-indigo-600 hover:bg-indigo-700"
                                 }`}
                             >
-                                {isSubmitting ? "Creating..." : "Create Room"}
+                                {isPending ? "Creating..." : "Create Room"}
                             </button>
                         </div>
                     </form>
