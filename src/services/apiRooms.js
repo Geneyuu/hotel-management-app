@@ -32,34 +32,37 @@ export async function deleteRoom(id) {
     }
 }
 
-// const { data, error } = await supabase
-//   .from('rooms')
-//   .insert([
-//     { some_column: 'someValue', other_column: 'otherValue' },
-//   ])
-//   .select()
+// export async function addRoom() {
+//     const { data, error } = await supabase
+//         .from("rooms")
+//         .insert([
+//             {
+//                 name: "Deluxe Room",
+//                 Capacity: 2500,
+//                 price: 129,
+//                 discount: 10,
+//                 description: "With balcony and ocean view",
+//             },
+//         ])
+//         .select();
 
-export async function addRoom() {
-    const { data, error } = await supabase
-        .from("rooms")
-        .insert([
-            {
-                name: "Deluxe Room",
-                Capacity: 2500,
-                price: 129,
-                discount: 10,
-                description: "With balcony and ocean view",
-            },
-        ])
-        .select();
+//     if (error) {
+//         console.error("Error inserting room:", error.message);
+//         throw new Error(error.message);
+//     }
+
+//     console.log("Room added:", data);
+//     return data;
+// }
+
+export async function addRoom(newRoom) {
+    const { data, error } = await supabase.from("rooms").insert([newRoom]).select();
 
     if (error) {
-        console.error("❌ Error inserting room:", error.message);
+        console.error("Error inserting room:", error.message);
         throw new Error(error.message);
     }
 
     console.log("✅ Room added:", data);
     return data;
 }
-
-console.log(addRoom());
