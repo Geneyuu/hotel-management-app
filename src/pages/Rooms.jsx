@@ -7,9 +7,36 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import AddNewRoom from "../components/AddNewRoom";
 
+const ConfirmModal = ({ message, onConfirm, onCancel }) => {
+    return (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] px-4">
+            <div className="bg-gray-800 border border-gray-700 p-5 sm:p-6 md:p-8 rounded-xl w-full max-w-xs sm:max-w-sm md:max-w-lg text-white shadow-2xl animate-fadeIn">
+                <p className="text-sm sm:text-base md:text-base text-center mb-6">{message}</p>
+
+                <div className="flex justify-center gap-2 sm:gap-4 mt-4">
+                    <button
+                        onClick={onConfirm}
+                        className="px-3 py-2 sm:px-4 sm:py-2 bg-red-600 rounded text-xs sm:text-sm md:text-xs hover:bg-red-700 transition"
+                    >
+                        Delete
+                    </button>
+
+                    <button
+                        onClick={onCancel}
+                        className="px-3 py-2 sm:px-4 sm:py-2 bg-gray-600 rounded text-xs sm:text-sm md:text-xs hover:bg-gray-700 transition"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const Rooms = () => {
     const queryClient = useQueryClient();
 
+    // Fetch rooms
     const {
         isLoading,
         data: rooms = [],
@@ -19,15 +46,14 @@ const Rooms = () => {
         queryFn: getAllRooms,
     });
 
-    const { mutate: removeRoom, isPending } = useMutation({
+    // Delete Mutate
+    const { mutate: removeRoom } = useMutation({
         mutationFn: deleteRoom,
-        onSuccess: (data) => {
-            console.log("Successfully deleted:", data);
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["rooms"] });
             toast.success("Room deleted successfully!");
         },
         onError: (error) => {
-            console.error("Error deleting room:", error);
             toast.error(`Error deleting room: ${error.message}`);
         },
     });
@@ -38,7 +64,26 @@ const Rooms = () => {
         setOpenMenuId(openMenuId === id ? null : id);
     };
 
-    // Close dropdown when clicking outside
+    // Modal States
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [selectedRoom, setSelectedRoom] = useState(null);
+
+    const openConfirm = (room) => {
+        setSelectedRoom(room);
+        setIsConfirmOpen(true);
+    };
+
+    const closeConfirm = () => {
+        setSelectedRoom(null);
+        setIsConfirmOpen(false);
+    };
+
+    const confirmDelete = () => {
+        removeRoom(selectedRoom.id);
+        closeConfirm();
+    };
+
+    // Auto-close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -48,49 +93,43 @@ const Rooms = () => {
                 setOpenMenuId(null);
             }
         };
-
         document.addEventListener("click", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("click", handleClickOutside);
-        };
+        return () => document.removeEventListener("click", handleClickOutside);
     }, []);
 
     if (isLoading) return <Spinner />;
-
-    if (error) {
-        return <p className="text-red-500">Error: {error.message}</p>;
-    }
+    if (error) return <p className="text-red-500">Error: {error.message}</p>;
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5 max-h-[50vh]">
             <h1 className="text-lg md:text-2xl font-semibold text-white">All Rooms</h1>
 
-            <div className="scrollbar-dark max-h-[650px] overflow-y-scroll border border-gray-700 rounded-md">
-                <table className="w-full text-[10px] sm:text-xs md:text-sm">
-                    <thead className="bg-gray-800 text-white sticky top-0 z-10">
+            {/* TABLE */}
+            <div className="border border-gray-700 rounded-lg">
+                <table className="w-full text-[10px] sm:text-xs md:text-sm p-5 table-auto border-collapse">
+                    <thead className="text-white bg-gray-800">
                         <tr className="text-center uppercase">
-                            <th className="p-2 sm:p-3 text-start pl-3 sm:pl-6">Rooms</th>
-                            <th className="p-2 sm:p-3">Price</th>
-                            <th className="p-2 sm:p-3">Capacity</th>
-                            <th className="p-2 sm:p-3">Discounts</th>
-                            <th className="p-2 sm:p-3">Actions</th>
+                            <th className="p-2 sm:p-3 font-medium">Rooms</th>
+                            <th className="p-2 sm:p-3 font-medium">Price</th>
+                            <th className="p-2 sm:p-3 font-medium">Capacity</th>
+                            <th className="p-2 sm:p-3 font-medium">Discounts</th>
+                            <th className="p-2 sm:p-3 font-medium">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="font-normal">
+
+                    <tbody>
                         {rooms.map((room) => {
                             const { id, name, image, price, Capacity, discount } = room;
 
                             return (
-                                <tr key={id} className="">
+                                <tr key={id} className="bg-[#18212F] font-light">
                                     <td className="border-t border-gray-700">
-                                        <div className="flex items-center gap-2 sm:gap-4 md:gap-5">
+                                        <div className="flex items-center lg:w-[70%]">
                                             <img
                                                 src={image || "https://placehold.co/100"}
-                                                alt={name}
-                                                className="w-12 sm:w-16 md:w-24 object-cover rounded-md"
+                                                className="w-16 md:w-24 object-cover rounded-r-sm"
                                             />
-                                            <span className="text-[11px] sm:text-sm text-white">
+                                            <span className=" text-white text-[11px] sm:text-sm mx-auto">
                                                 {name}
                                             </span>
                                         </div>
@@ -110,54 +149,40 @@ const Rooms = () => {
 
                                     <td className="border-t border-gray-700 text-center text-white relative">
                                         <span
-                                            tabIndex={0}
-                                            className="dropdown-button sm:text-sm cursor-pointer inline-block p-1 rounded transition-all duration-200 hover:bg-[#18212F]"
+                                            className="dropdown-button cursor-pointer inline-block p-1 rounded hover:bg-[#18212F]"
                                             onClick={() => toggleMenu(id)}
                                         >
-                                            <HiOutlineDotsVertical className="text-sm md:text-lg" />
+                                            <HiOutlineDotsVertical className="text-lg" />
                                         </span>
 
-                                        {/* Dropdown menu */}
+                                        {/* Dropdown */}
                                         <div
-                                            className={`dropdown-menu absolute  right-2 md:-left-16 lg:-left-4 mt-2 w-32 bg-gray-800 rounded shadow-2xl transform transition-all duration-200 ${
+                                            className={`dropdown-menu absolute z-50 right-2 md:-left-16 lg:-left-4 mt-2 w-32 bg-gray-800 rounded shadow-2xl transition-all duration-200 ${
                                                 openMenuId === id
                                                     ? "scale-100 opacity-100"
                                                     : "scale-95 opacity-0 pointer-events-none"
                                             }`}
-                                            style={{ boxShadow: "5px 5px 20px rgba(0,0,0,0.4)" }}
                                         >
                                             <ul className="flex flex-col">
                                                 <li
-                                                    className="flex items-center gap-2 px-3 py-2 text-white text-xs cursor-pointer hover:bg-[#18212F]"
+                                                    className="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer hover:bg-[#18212F]"
                                                     onClick={() => alert(`Duplicate room ${name}`)}
                                                 >
-                                                    <IoCopyOutline className="w-4 h-4" />
-                                                    Duplicate
+                                                    <IoCopyOutline className="w-4 h-4" /> Duplicate
                                                 </li>
 
                                                 <li
-                                                    className="flex items-center gap-2 px-3 py-2 text-white text-xs cursor-pointer hover:bg-[#18212F]"
+                                                    className="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer hover:bg-[#18212F]"
                                                     onClick={() => alert(`Edit room ${name}`)}
                                                 >
-                                                    <HiPencil className="w-4 h-4" />
-                                                    Edit
+                                                    <HiPencil className="w-4 h-4" /> Edit
                                                 </li>
 
                                                 <li
-                                                    className="flex items-center gap-2 px-3 py-2 text-white text-xs cursor-pointer hover:bg-[#18212F]"
-                                                    onClick={() => {
-                                                        if (
-                                                            confirm(
-                                                                `Are you sure you want to delete "${name}"?`
-                                                            )
-                                                        ) {
-                                                            console.log("🗑️ Deleting room id:", id);
-                                                            removeRoom(id);
-                                                        }
-                                                    }}
+                                                    className="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer hover:bg-[#18212F]"
+                                                    onClick={() => openConfirm(room)}
                                                 >
-                                                    <HiTrash className="w-4 h-4" />
-                                                    Delete
+                                                    <HiTrash className="w-4 h-4" /> Delete
                                                 </li>
                                             </ul>
                                         </div>
@@ -168,7 +193,17 @@ const Rooms = () => {
                     </tbody>
                 </table>
             </div>
+
             <AddNewRoom />
+
+            {/* CONFIRM MODAL */}
+            {isConfirmOpen && (
+                <ConfirmModal
+                    message={`Do you want to delete Room "${selectedRoom?.name}"?`}
+                    onConfirm={confirmDelete}
+                    onCancel={closeConfirm}
+                />
+            )}
         </div>
     );
 };

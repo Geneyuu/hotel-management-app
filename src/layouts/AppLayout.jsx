@@ -17,13 +17,13 @@ const AppLayout = () => {
             </aside>
 
             {/* Main content area */}
-            <main className="flex-1 overflow-y-hidden">
+            <main className="flex-1 overflow-y-scroll scrollbar-dark">
                 {/* Secondary header (account info, toolbar, etc.) */}
-                <header>
+                <header className="sticky top-0 z-50">
                     <AccountHeader />
                 </header>
 
-                <section className="max-w-6xl px-4 mx-auto my-10 text-2xl font-semibold text-gray-200">
+                <section className="max-w-6xl px-4 mx-auto my-10 text-2xl font-semibold text-gray-200 z-0">
                     <Outlet />
                 </section>
             </main>
