@@ -28,14 +28,20 @@ const EditRoom = ({ room, isOpen, onClose }) => {
     });
 
     const onSubmit = ({ name, price, capacity, discount, description, photo }) => {
-        editRoomMutate({
+        const updatedRoom = {
             name,
             price: Number(price),
             Capacity: Number(capacity),
             discount: Number(discount || 0),
             description,
-            image: photo ? photo[0] : null,
-        });
+        };
+
+        // Only add image if a new file was uploaded
+        if (photo && photo.length > 0) {
+            updatedRoom.image = photo[0];
+        }
+
+        editRoomMutate(updatedRoom);
     };
 
     useEffect(() => {
@@ -77,6 +83,7 @@ const EditRoom = ({ room, isOpen, onClose }) => {
                 <RoomForm
                     register={register}
                     errors={errors}
+                    isPending={isPending}
                     defaultValues={{
                         name: room.name,
                         price: room.price,

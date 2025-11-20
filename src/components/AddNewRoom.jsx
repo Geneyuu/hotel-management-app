@@ -93,6 +93,7 @@ const AddNewRoom = () => {
 
                     <RoomForm
                         register={register}
+                        isPending={isPending}
                         errors={errors}
                         defaultValues={{
                             name: "",

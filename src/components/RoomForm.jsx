@@ -3,7 +3,15 @@ const inputBase =
     "bg-transparent border min-w-[35%] md:w-1/4 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1";
 const errorBase = "text-red-400 ml-[34.5%] text-[11px]";
 
-export const RoomForm = ({ register, errors, defaultValues, onSubmit, onCancel, submitLabel }) => {
+export const RoomForm = ({
+    register,
+    errors,
+    defaultValues,
+    onSubmit,
+    onCancel,
+    submitLabel,
+    isPending,
+}) => {
     const FormRow = ({ label, id, children, error }) => (
         <div className={formRowBase}>
             <div className="flex items-center gap-2">
@@ -111,7 +119,9 @@ export const RoomForm = ({ register, errors, defaultValues, onSubmit, onCancel, 
 
                 <button
                     type="submit"
-                    className={`px-4 py-2 rounded transition-colors bg-indigo-600 hover:bg-indigo-700`}
+                    disabled={isPending}
+                    className={`px-4 py-2 rounded transition-colors bg-indigo-600 hover:bg-indigo-700
+        ${isPending ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                 >
                     {submitLabel}
                 </button>

@@ -92,39 +92,20 @@ export async function addRoom(newRoom) {
 export async function updateRoom(id, updatedRoom) {
     try {
         let imagePath = updatedRoom.image;
-        console.log(`this is image path`, imagePath);
+        console.log(imagePath);
 
-        // 1. If a new image is uploaded, remove old one and upload new
         if (updatedRoom.image) {
-            // Delete old image if exists
-            if (updatedRoom.imagePath) {
-                const oldFileName = updatedRoom.imagePath.split("/").pop();
-                const { error: deleteError } = await supabase.storage
-                    .from("rooms-images")
-                    .remove([oldFileName]);
-
-                if (deleteError) {
-                    console.error("Failed to delete old image:", deleteError.message);
-                } else {
-                    console.log("Old image deleted:", oldFileName);
-                }
-            }
-
-            // Upload new image
             const imageName = `${Math.random()}-${updatedRoom.image.name}`.replaceAll("/", "");
             const { error: uploadError } = await supabase.storage
                 .from("rooms-images")
                 .upload(imageName, updatedRoom.image);
 
-            if (uploadError) {
-                console.error("Upload error:", uploadError.message);
-                throw new Error(uploadError.message);
-            }
+            if (uploadError) throw new Error(uploadError.message);
 
             imagePath = `${supabaseUrl}/storage/v1/object/public/rooms-images/${imageName}`;
         }
 
-        // 2. Update room row in Supabase
+        // Update Supabase row
         const { data, error } = await supabase
             .from("rooms")
             .update({
@@ -133,20 +114,15 @@ export async function updateRoom(id, updatedRoom) {
                 Capacity: updatedRoom.Capacity,
                 discount: updatedRoom.discount || 0,
                 description: updatedRoom.description,
-                image: imagePath,
+                image: imagePath, // since undefined yung mapapasa dito kapag walang nilagay na bagong image eh ang default ng supabase ay iignore nya lang yung undefined at di nya gagalawin yung previous file na meron tong image
             })
             .eq("id", id)
             .select();
 
-        if (error) {
-            console.error("Failed to update room:", error.message);
-            throw new Error(error.message);
-        }
+        if (error) throw new Error(error.message);
 
-        console.log("Room updated:", data);
         return data;
     } catch (err) {
-        console.error("Error in updateRoom:", err.message);
         throw new Error(err.message);
     }
 }
