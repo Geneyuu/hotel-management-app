@@ -100,7 +100,7 @@ export async function deleteRoom(id, imagePath) {
 //         throw new Error(error.message);
 //     }
 
-//     console.log("✅ Room added:", data);
+//     console.log(" Room added:", data);
 //     return data;
 // }
 
