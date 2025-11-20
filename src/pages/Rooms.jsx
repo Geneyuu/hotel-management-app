@@ -12,7 +12,6 @@ const ConfirmModal = ({ message, onConfirm, onCancel }) => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] px-4">
             <div className="bg-gray-800 border border-gray-700 p-5 sm:p-6 md:p-8 rounded-xl w-full max-w-xs sm:max-w-sm md:max-w-lg text-white shadow-2xl animate-fadeIn">
                 <p className="text-sm sm:text-base md:text-base text-center mb-6">{message}</p>
-
                 <div className="flex justify-center gap-2 sm:gap-4 mt-4">
                     <button
                         onClick={onConfirm}
@@ -36,7 +35,6 @@ const ConfirmModal = ({ message, onConfirm, onCancel }) => {
 const Rooms = () => {
     const queryClient = useQueryClient();
 
-    // Fetch rooms
     const {
         isLoading,
         data: rooms = [],
@@ -48,7 +46,7 @@ const Rooms = () => {
 
     // Delete Mutate
     const { mutate: removeRoom } = useMutation({
-        mutationFn: deleteRoom,
+        mutationFn: ({ id, imagePath }) => deleteRoom(id, imagePath),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["rooms"] });
             toast.success("Room deleted successfully!");
@@ -79,7 +77,8 @@ const Rooms = () => {
     };
 
     const confirmDelete = () => {
-        removeRoom(selectedRoom.id);
+        if (!selectedRoom) return;
+        removeRoom({ id: selectedRoom.id, imagePath: selectedRoom.image });
         closeConfirm();
     };
 
@@ -129,7 +128,7 @@ const Rooms = () => {
                                                 src={image || "https://placehold.co/100"}
                                                 className="w-16 md:w-24 object-cover rounded-r-sm"
                                             />
-                                            <span className=" text-white text-[11px] sm:text-sm mx-auto">
+                                            <span className="text-white text-[11px] sm:text-sm mx-auto">
                                                 {name}
                                             </span>
                                         </div>

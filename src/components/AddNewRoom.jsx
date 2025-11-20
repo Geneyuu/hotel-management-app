@@ -32,15 +32,18 @@ const AddNewRoom = () => {
         onError: (err) => toast.error("Failed: " + err.message),
     });
 
-    const onSubmit = ({ name, price, capacity, discount, description }) =>
+    const onSubmit = ({ name, price, capacity, discount, description, photo }) => {
+        console.log("PHOTO FILE:", photo[0]);
+
         addRoomMutate({
-            //eto yung argument na pinasa sa addRoom Argument ito like addroom(addRoomMutate) umay
             name,
             price: Number(price),
             Capacity: Number(capacity),
             discount: Number(discount || 0),
             description,
+            image: photo[0],
         });
+    };
 
     useEffect(() => {
         const close = (e) => {
@@ -190,6 +193,22 @@ const AddNewRoom = () => {
                                 />
                             </div>
                         </div>
+
+                        <FormRow label="Room Photo" id="photo" error={errors.photo}>
+                            <input
+                                {...register("photo", {
+                                    required: "Room photo is required",
+                                })}
+                                type="file"
+                                accept="image/*"
+                                id="photo"
+                                className={`${inputBase} ${
+                                    errors.photo
+                                        ? "border-red-500 focus:ring-red-500"
+                                        : "focus:ring-indigo-500"
+                                }`}
+                            />
+                        </FormRow>
 
                         {/* Buttons */}
                         <div className="flex justify-end gap-3 mt-4">
