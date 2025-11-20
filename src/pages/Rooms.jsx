@@ -6,34 +6,42 @@ import { IoCopyOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import AddNewRoom from "../components/AddNewRoom";
+import EditRoom from "../components/EditRoom";
 
-const ConfirmModal = ({ message, onConfirm, onCancel }) => {
-    return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] px-4">
-            <div className="bg-gray-800 border border-gray-700 p-5 sm:p-6 md:p-8 rounded-xl w-full max-w-xs sm:max-w-sm md:max-w-lg text-white shadow-2xl animate-fadeIn">
-                <p className="text-sm sm:text-base md:text-base text-center mb-6">{message}</p>
-                <div className="flex justify-center gap-2 sm:gap-4 mt-4">
-                    <button
-                        onClick={onConfirm}
-                        className="px-3 py-2 sm:px-4 sm:py-2 bg-red-600 rounded text-xs sm:text-sm md:text-xs hover:bg-red-700 transition"
-                    >
-                        Delete
-                    </button>
-
-                    <button
-                        onClick={onCancel}
-                        className="px-3 py-2 sm:px-4 sm:py-2 bg-gray-600 rounded text-xs sm:text-sm md:text-xs hover:bg-gray-700 transition"
-                    >
-                        Cancel
-                    </button>
-                </div>
+const ConfirmModal = ({ message, onConfirm, onCancel, isOpen }) => (
+    <div
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] px-4 transition-opacity duration-200 ${
+            isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+    >
+        <div
+            className={`bg-gray-800 border border-gray-700 p-5 sm:p-6 md:p-8 rounded-xl w-full max-w-xs sm:max-w-sm md:max-w-lg text-white shadow-2xl transform transition-transform duration-200 ${
+                isOpen ? "scale-100" : "scale-95"
+            }`}
+        >
+            <p className="text-sm sm:text-base md:text-base text-center mb-6">{message}</p>
+            <div className="flex justify-center gap-2 sm:gap-4 mt-4">
+                <button
+                    onClick={onConfirm}
+                    className="px-3 py-2 sm:px-4 sm:py-2 bg-red-600 rounded text-xs sm:text-sm md:text-xs hover:bg-red-700 transition"
+                >
+                    Delete
+                </button>
+                <button
+                    onClick={onCancel}
+                    className="px-3 py-2 sm:px-4 sm:py-2 bg-gray-600 rounded text-xs sm:text-sm md:text-xs hover:bg-gray-700 transition"
+                >
+                    Cancel
+                </button>
             </div>
         </div>
-    );
-};
+    </div>
+);
 
 const Rooms = () => {
     const queryClient = useQueryClient();
+    const [openMenuId, setOpenMenuId] = useState(null);
+    const [modal, setModal] = useState({ type: null, room: null });
 
     const {
         isLoading,
@@ -44,42 +52,24 @@ const Rooms = () => {
         queryFn: getAllRooms,
     });
 
-    // Delete Mutate
     const { mutate: removeRoom } = useMutation({
         mutationFn: ({ id, imagePath }) => deleteRoom(id, imagePath),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["rooms"] });
+            queryClient.invalidateQueries(["rooms"]);
             toast.success("Room deleted successfully!");
+            setModal({ type: null, room: null });
         },
-        onError: (error) => {
-            toast.error(`Error deleting room: ${error.message}`);
-        },
+        onError: (err) => toast.error(`Error deleting room: ${err.message}`),
     });
 
-    const [openMenuId, setOpenMenuId] = useState(null);
+    const toggleMenu = (id) => setOpenMenuId(openMenuId === id ? null : id);
 
-    const toggleMenu = (id) => {
-        setOpenMenuId(openMenuId === id ? null : id);
-    };
-
-    // Modal States
-    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-    const [selectedRoom, setSelectedRoom] = useState(null);
-
-    const openConfirm = (room) => {
-        setSelectedRoom(room);
-        setIsConfirmOpen(true);
-    };
-
-    const closeConfirm = () => {
-        setSelectedRoom(null);
-        setIsConfirmOpen(false);
-    };
+    const openModal = (type, room) => setModal({ type, room });
+    const closeModal = () => setModal({ type: null, room: null });
 
     const confirmDelete = () => {
-        if (!selectedRoom) return;
-        removeRoom({ id: selectedRoom.id, imagePath: selectedRoom.image });
-        closeConfirm();
+        if (!modal.room) return;
+        removeRoom({ id: modal.room.id, imagePath: modal.room.image });
     };
 
     // Auto-close dropdown when clicking outside
@@ -103,9 +93,8 @@ const Rooms = () => {
         <div className="flex flex-col gap-5 max-h-[50vh]">
             <h1 className="text-lg md:text-2xl font-semibold text-white">All Rooms</h1>
 
-            {/* TABLE */}
             <div className="border border-gray-700 rounded-lg">
-                <table className="w-full text-[10px] sm:text-xs md:text-sm p-5 table-auto border-collapse">
+                <table className="w-full text-[10px] sm:text-xs md:text-sm table-auto border-collapse">
                     <thead className="text-white bg-gray-800">
                         <tr className="text-center uppercase">
                             <th className="p-2 sm:p-3 font-medium">Rooms</th>
@@ -115,11 +104,9 @@ const Rooms = () => {
                             <th className="p-2 sm:p-3 font-medium">Actions</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         {rooms.map((room) => {
                             const { id, name, image, price, Capacity, discount } = room;
-
                             return (
                                 <tr key={id} className="bg-[#18212F] font-light">
                                     <td className="border-t border-gray-700">
@@ -133,19 +120,15 @@ const Rooms = () => {
                                             </span>
                                         </div>
                                     </td>
-
                                     <td className="border-t border-gray-700 text-center text-white">
                                         ${price}
                                     </td>
-
                                     <td className="border-t border-gray-700 text-center text-white">
                                         Fits up to {Capacity}
                                     </td>
-
                                     <td className="border-t border-gray-700 text-center text-white">
                                         {discount ? `${discount}%` : "—"}
                                     </td>
-
                                     <td className="border-t border-gray-700 text-center text-white relative">
                                         <span
                                             className="dropdown-button cursor-pointer inline-block p-1 rounded hover:bg-[#18212F]"
@@ -154,7 +137,6 @@ const Rooms = () => {
                                             <HiOutlineDotsVertical className="text-lg" />
                                         </span>
 
-                                        {/* Dropdown */}
                                         <div
                                             className={`dropdown-menu absolute z-50 right-2 md:-left-16 lg:-left-4 mt-2 w-32 bg-gray-800 rounded shadow-2xl transition-all duration-200 ${
                                                 openMenuId === id
@@ -165,21 +147,28 @@ const Rooms = () => {
                                             <ul className="flex flex-col">
                                                 <li
                                                     className="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer hover:bg-[#18212F]"
-                                                    onClick={() => alert(`Duplicate room ${name}`)}
+                                                    onClick={() => {
+                                                        alert(`Duplicate room ${name}`);
+                                                        setOpenMenuId(null);
+                                                    }}
                                                 >
                                                     <IoCopyOutline className="w-4 h-4" /> Duplicate
                                                 </li>
-
                                                 <li
                                                     className="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer hover:bg-[#18212F]"
-                                                    onClick={() => alert(`Edit room ${name}`)}
+                                                    onClick={() => {
+                                                        openModal("edit", room);
+                                                        setOpenMenuId(null);
+                                                    }}
                                                 >
                                                     <HiPencil className="w-4 h-4" /> Edit
                                                 </li>
-
                                                 <li
                                                     className="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer hover:bg-[#18212F]"
-                                                    onClick={() => openConfirm(room)}
+                                                    onClick={() => {
+                                                        openModal("confirm", room);
+                                                        setOpenMenuId(null);
+                                                    }}
                                                 >
                                                     <HiTrash className="w-4 h-4" /> Delete
                                                 </li>
@@ -195,14 +184,29 @@ const Rooms = () => {
 
             <AddNewRoom />
 
-            {/* CONFIRM MODAL */}
-            {isConfirmOpen && (
-                <ConfirmModal
-                    message={`Do you want to delete Room "${selectedRoom?.name}"?`}
-                    onConfirm={confirmDelete}
-                    onCancel={closeConfirm}
-                />
-            )}
+            {/* Confirm Modal */}
+            <ConfirmModal
+                message={`Do you want to delete Room "${modal.room?.name}"?`}
+                isOpen={modal.type === "confirm"}
+                onConfirm={confirmDelete}
+                onCancel={closeModal}
+            />
+
+            {/* EditRoom Modal */}
+            <EditRoom
+                room={
+                    modal.room || {
+                        id: "",
+                        name: "",
+                        price: 0,
+                        Capacity: 0,
+                        discount: 0,
+                        description: "",
+                    }
+                }
+                isOpen={modal.type === "edit"}
+                onClose={closeModal}
+            />
         </div>
     );
 };

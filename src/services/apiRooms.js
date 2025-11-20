@@ -16,22 +16,6 @@ export async function getAllRooms() {
     }
 }
 
-//idedelete ang row base sa selected ID
-// export async function deleteRoom(id) {
-//     try {
-//         const { data, error } = await supabase.from("rooms").delete().eq("id", id).select();
-
-//         if (error) {
-//             throw new Error("Failed to delete room");
-//         }
-
-//         return data;
-//     } catch (error) {
-//         console.error(error.message);
-//         throw error;
-//     }
-// }
-
 export async function deleteRoom(id, imagePath) {
     try {
         //  Delete the file from Supabase Storage if imagePath exists
@@ -64,45 +48,6 @@ export async function deleteRoom(id, imagePath) {
         throw error;
     }
 }
-
-// export async function addRoom() {
-//     const { data, error } = await supabase
-//         .from("rooms")
-//         .insert([
-//             {
-//                 name: "Deluxe Room",
-//                 Capacity: 2500,
-//                 price: 129,
-//                 discount: 10,
-//                 description: "With balcony and ocean view",
-//             },
-//         ])
-//         .select();
-
-//     if (error) {
-//         console.error("Error inserting room:", error.message);
-//         throw new Error(error.message);
-//     }
-
-//     console.log("Room added:", data);
-//     return data;
-// }
-
-// export async function addRoom(newRoom) {
-//     const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll("/", "");
-
-//     const imagePath = `${supabaseUrl}/storage/v1/object/public/rooms-images/${imageName}`;
-
-//     const { data, error } = await supabase.from("rooms").insert([newRoom]).select();
-
-//     if (error) {
-//         console.error("Error inserting room:", error.message);
-//         throw new Error(error.message);
-//     }
-
-//     console.log(" Room added:", data);
-//     return data;
-// }
 
 export async function addRoom(newRoom) {
     // eto to avoid para alisin yung "/" incase na may ganyan sa fileName kasi masisira yung path pag may ganyan
@@ -142,4 +87,66 @@ export async function addRoom(newRoom) {
 
     console.log(" Room added:", data);
     return data;
+}
+
+export async function updateRoom(id, updatedRoom) {
+    try {
+        let imagePath = updatedRoom.image;
+        console.log(`this is image path`, imagePath);
+
+        // 1. If a new image is uploaded, remove old one and upload new
+        if (updatedRoom.image) {
+            // Delete old image if exists
+            if (updatedRoom.imagePath) {
+                const oldFileName = updatedRoom.imagePath.split("/").pop();
+                const { error: deleteError } = await supabase.storage
+                    .from("rooms-images")
+                    .remove([oldFileName]);
+
+                if (deleteError) {
+                    console.error("Failed to delete old image:", deleteError.message);
+                } else {
+                    console.log("Old image deleted:", oldFileName);
+                }
+            }
+
+            // Upload new image
+            const imageName = `${Math.random()}-${updatedRoom.image.name}`.replaceAll("/", "");
+            const { error: uploadError } = await supabase.storage
+                .from("rooms-images")
+                .upload(imageName, updatedRoom.image);
+
+            if (uploadError) {
+                console.error("Upload error:", uploadError.message);
+                throw new Error(uploadError.message);
+            }
+
+            imagePath = `${supabaseUrl}/storage/v1/object/public/rooms-images/${imageName}`;
+        }
+
+        // 2. Update room row in Supabase
+        const { data, error } = await supabase
+            .from("rooms")
+            .update({
+                name: updatedRoom.name,
+                price: updatedRoom.price,
+                Capacity: updatedRoom.Capacity,
+                discount: updatedRoom.discount || 0,
+                description: updatedRoom.description,
+                image: imagePath,
+            })
+            .eq("id", id)
+            .select();
+
+        if (error) {
+            console.error("Failed to update room:", error.message);
+            throw new Error(error.message);
+        }
+
+        console.log("Room updated:", data);
+        return data;
+    } catch (err) {
+        console.error("Error in updateRoom:", err.message);
+        throw new Error(err.message);
+    }
 }
