@@ -1,7 +1,22 @@
+import React from "react";
+
 const formRowBase = "flex flex-col gap-1 border-b border-gray-800 py-3";
 const inputBase =
     "bg-transparent border min-w-[35%] md:w-1/4 border-gray-500 rounded px-2 py-1.5 focus:outline-none focus:ring-1";
 const errorBase = "text-red-400 ml-[34.5%] text-[11px]";
+
+// Memoize FormRow to prevent re-render losing focus
+const FormRow = React.memo(({ label, id, children, error }) => (
+    <div className={formRowBase}>
+        <div className="flex items-center gap-2">
+            <label htmlFor={id} className="w-1/3">
+                {label}
+            </label>
+            {children}
+        </div>
+        {error && <p className={errorBase}>{error.message}</p>}
+    </div>
+));
 
 export const RoomForm = ({
     register,
@@ -12,18 +27,6 @@ export const RoomForm = ({
     submitLabel,
     isPending,
 }) => {
-    const FormRow = ({ label, id, children, error }) => (
-        <div className={formRowBase}>
-            <div className="flex items-center gap-2">
-                <label htmlFor={id} className="w-1/3">
-                    {label}
-                </label>
-                {children}
-            </div>
-            {error && <p className={errorBase}>{error.message}</p>}
-        </div>
-    );
-
     return (
         <form onSubmit={onSubmit} className="text-xs font-normal flex flex-col gap-3">
             <FormRow label="Room Name" id="name" error={errors.name}>

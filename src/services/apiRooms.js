@@ -50,32 +50,35 @@ export async function deleteRoom(id, imagePath) {
 }
 
 export async function addRoom(newRoom) {
-    // eto to avoid para alisin yung "/" incase na may ganyan sa fileName kasi masisira yung path pag may ganyan
-    const imageName = `${Math.random()}-${newRoom.image.name}`.replaceAll("/", "");
+    let imagePath = null;
 
-    console.log(imageName);
-    console.log(`this is newRoom.image.name`, newRoom.image.name);
+    if (newRoom.image) {
+        // eto to avoid para alisin yung "/" incase na may ganyan sa fileName kasi masisira yung path pag may ganyan
+        const imageName = `${Math.random()}-${newRoom.image.name}`.replaceAll("/", "");
 
-    // eto is for uploading the image and the imageName ng file sa storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("rooms-images")
-        .upload(imageName, newRoom.image);
+        console.log(imageName);
+        console.log(`this is newRoom.image.name`, newRoom.image.name);
 
-    if (uploadError) {
-        console.error("Upload error:", uploadError.message);
-        throw new Error(uploadError.message);
+        // eto is for uploading the image and the imageName ng file sa storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
+            .from("rooms-images")
+            .upload(imageName, newRoom.image);
+
+        if (uploadError) {
+            console.error("Upload error:", uploadError.message);
+            throw new Error(uploadError.message);
+        }
+
+        // eto ay for the imagePath link lang para maaacess sa <img src /> syenpre yung link image this is not storage file
+        let imagePath = `${supabaseUrl}/storage/v1/object/public/rooms-images/${imageName}`;
     }
-
-    // eto ay for the imagePath link lang para maaacess sa <img src /> syenpre yung link image this is not storage file
-    const imagePath = `${supabaseUrl}/storage/v1/object/public/rooms-images/${imageName}`;
-
-    //tas dito isisnama lang yung image para ilagay yung imagepath to make it accesible sa <img src />
+    // tas dito isisnama lang yung image para ilagay yung imagepath to make it accesible sa <img src />
     const { data, error } = await supabase
         .from("rooms")
         .insert([
             {
                 ...newRoom,
-                image: imagePath,
+                image: imagePath, // null if no image
             },
         ])
         .select();
@@ -85,7 +88,7 @@ export async function addRoom(newRoom) {
         throw new Error(error.message);
     }
 
-    console.log(" Room added:", data);
+    console.log("Room added:", data);
     return data;
 }
 

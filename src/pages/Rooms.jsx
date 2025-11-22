@@ -1,5 +1,5 @@
-import { deleteRoom, getAllRooms } from "../services/apiRooms";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getAllRooms } from "../services/apiRooms";
+import { useQuery } from "@tanstack/react-query";
 import Spinner from "../components/Spinner";
 import { HiOutlineDotsVertical, HiPencil, HiTrash } from "react-icons/hi";
 import { IoCopyOutline } from "react-icons/io5";
@@ -7,6 +7,9 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import AddNewRoom from "../components/AddNewRoom";
 import EditRoom from "../components/EditRoom";
+
+// custom hook
+import { useDeleteRoom } from "../hooks/useDeleteRoom";
 
 const ConfirmModal = ({ message, onConfirm, onCancel, isOpen }) => (
     <div
@@ -39,28 +42,21 @@ const ConfirmModal = ({ message, onConfirm, onCancel, isOpen }) => (
 );
 
 const Rooms = () => {
-    const queryClient = useQueryClient();
     const [openMenuId, setOpenMenuId] = useState(null);
     const [modal, setModal] = useState({ type: null, room: null });
 
     const {
         isLoading,
-        data: rooms = [],
+        data: rooms,
         error,
     } = useQuery({
         queryKey: ["rooms"],
         queryFn: getAllRooms,
     });
+    console.log(rooms);
 
-    const { mutate: removeRoom } = useMutation({
-        mutationFn: ({ id, imagePath }) => deleteRoom(id, imagePath),
-        onSuccess: () => {
-            queryClient.invalidateQueries(["rooms"]);
-            toast.success("Room deleted successfully!");
-            setModal({ type: null, room: null });
-        },
-        onError: (err) => toast.error(`Error deleting room: ${err.message}`),
-    });
+    //  CUSTOM HOOK
+    const removeRoom = useDeleteRoom();
 
     const toggleMenu = (id) => setOpenMenuId(openMenuId === id ? null : id);
 
@@ -69,7 +65,13 @@ const Rooms = () => {
 
     const confirmDelete = () => {
         if (!modal.room) return;
-        removeRoom({ id: modal.room.id, imagePath: modal.room.image });
+
+        removeRoom({
+            id: modal.room.id,
+            imagePath: modal.room.image,
+        });
+
+        closeModal();
     };
 
     // Auto-close dropdown when clicking outside
@@ -184,7 +186,6 @@ const Rooms = () => {
 
             <AddNewRoom />
 
-            {/* Confirm Modal */}
             <ConfirmModal
                 message={`Do you want to delete Room "${modal.room?.name}"?`}
                 isOpen={modal.type === "confirm"}
@@ -192,7 +193,6 @@ const Rooms = () => {
                 onCancel={closeModal}
             />
 
-            {/* EditRoom Modal */}
             <EditRoom
                 room={
                     modal.room || {
