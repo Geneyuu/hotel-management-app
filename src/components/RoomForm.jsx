@@ -104,8 +104,10 @@ export const RoomForm = ({
                     {...register("photo")}
                     type="file"
                     accept="image/*"
-                    className={`${inputBase} ${
-                        errors.photo ? "border-red-500 focus:ring-red-500" : "focus:ring-indigo-500"
+                    className={`${inputBase} cursor-pointer ${
+                        errors.photo
+                            ? "border-red-500 focus:ring-red-500 "
+                            : "focus:ring-indigo-500"
                     }`}
                 />
             </FormRow>

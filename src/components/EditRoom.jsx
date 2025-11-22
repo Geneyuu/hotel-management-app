@@ -41,6 +41,22 @@ const EditRoom = ({ room, isOpen, onClose }) => {
             updatedRoom.image = photo[0];
         }
 
+        // Check if nothing changed
+        const noChanges =
+            updatedRoom.name === room.name &&
+            updatedRoom.price === room.price &&
+            updatedRoom.Capacity === room.Capacity &&
+            updatedRoom.discount === (room.discount || 0) &&
+            updatedRoom.description === room.description &&
+            !updatedRoom.image; // no new image
+
+        if (noChanges) {
+            toast.success("No changes made!");
+            onClose();
+            return; // do not call mutation
+        }
+
+        // Call the mutation only if there are changes
         editRoomMutate(updatedRoom);
     };
 

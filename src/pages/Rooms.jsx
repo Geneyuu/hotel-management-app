@@ -59,10 +59,8 @@ const Rooms = () => {
     const removeRoom = useDeleteRoom();
 
     const toggleMenu = (id) => setOpenMenuId(openMenuId === id ? null : id);
-
     const openModal = (type, room) => setModal({ type, room });
     const closeModal = () => setModal({ type: null, room: null });
-
     const confirmDelete = () => {
         if (!modal.room) return;
 

@@ -1,14 +1,11 @@
 import { useForm } from "react-hook-form";
 import { IoIosClose } from "react-icons/io";
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-import { addRoom } from "../services/apiRooms";
 import { RoomForm } from "./RoomForm";
+import { useAddRoom } from "../hooks/useAddRoom";
 
 const AddNewRoom = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const queryClient = useQueryClient();
 
     const {
         register,
@@ -17,28 +14,28 @@ const AddNewRoom = () => {
         formState: { errors },
     } = useForm();
 
-    const { mutate: addRoomMutate, isPending } = useMutation({
-        mutationFn: (newRoom) => addRoom(newRoom),
-        onSuccess: async () => {
-            await queryClient.invalidateQueries(["rooms"]);
-            toast.success("Room added successfully!");
-            reset();
-            setIsOpen(false);
-        },
-        onError: (err) => toast.error("Failed: " + err.message),
-    });
+    const { addRoomMutate, isPending } = useAddRoom();
 
     const onSubmit = ({ name, price, capacity, discount, description, photo }) => {
-        addRoomMutate({
-            name,
-            price: Number(price),
-            Capacity: Number(capacity),
-            discount: Number(discount || 0),
-            description,
-            image: photo ? photo[0] : null,
-        });
+        addRoomMutate(
+            {
+                name,
+                price: Number(price),
+                Capacity: Number(capacity),
+                discount: Number(discount || 0),
+                description,
+                image: photo ? photo[0] : null,
+            },
+            {
+                onSuccess: () => {
+                    reset(); // reset form
+                    setIsOpen(false); // close modal
+                },
+            }
+        );
     };
 
+    // ESC key to close modal
     useEffect(() => {
         const handleEsc = (e) => {
             if (e.key === "Escape") setIsOpen(false);
@@ -56,13 +53,12 @@ const AddNewRoom = () => {
                     setIsOpen(true);
                 }}
                 className="text-[10px] md:text-xs font-normal bg-[#4f46e5] w-fit cursor-pointer 
-          px-3 md:py-2 md:px-4 rounded-md transition-all duration-300 
-          hover:bg-[#4338ca]"
+          px-3 md:py-2 md:px-4 rounded-md transition-all duration-300 hover:bg-[#4338ca]"
             >
                 Add new Room
             </div>
 
-            {/* Modal (always mounted for animation) */}
+            {/* Modal */}
             <div
                 className={`fixed inset-0 flex justify-center items-center z-50 bg-black/50 transition-opacity duration-300 ease-out
           ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
@@ -79,6 +75,7 @@ const AddNewRoom = () => {
                 >
                     <h2 className="text-lg font-semibold mb-4">Add New Room</h2>
 
+                    {/* Close Button */}
                     <div
                         onClick={() => {
                             reset();
@@ -93,8 +90,8 @@ const AddNewRoom = () => {
 
                     <RoomForm
                         register={register}
-                        isPending={isPending}
                         errors={errors}
+                        isPending={isPending}
                         defaultValues={{
                             name: "",
                             price: "",
